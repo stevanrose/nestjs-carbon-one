@@ -1,13 +1,5 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
-import path from 'path';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -21,8 +13,22 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
-      const res = exception.getResponse();
-      message = typeof res === 'string' ? res : (res as any).message || res;
+
+      const res: unknown = exception.getResponse();
+
+      if (typeof res === 'string') {
+        message = res;
+      } else if (typeof res === 'object' && res !== null && 'message' in res) {
+        const maybeMessage = (res as { message: unknown }).message;
+
+        if (typeof maybeMessage === 'string' || Array.isArray(maybeMessage)) {
+          message = maybeMessage;
+        } else {
+          message = res as object;
+        }
+      } else {
+        message = res as object;
+      }
     }
 
     response.status(status).json({
