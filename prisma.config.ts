@@ -14,7 +14,6 @@ export default defineConfig({
     path: 'prisma/migrations',
   },
   datasource: {
-    // Read DATABASE_URL from the environment (and error nicely if it's missing)
     url: env<Env>('DATABASE_URL'),
   },
 });

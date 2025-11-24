@@ -1,18 +1,31 @@
-version: '3.8'
-
+volumes:
+  nestjs_carbon_one:
+    driver: local
 services:
-  postgres:
+  nestjs_carbon_one_backend:
     image: postgres:16
-    container_name: carbon_one_postgres
-    restart: always
+    volumes:
+      - nestjs_carbon_one:/var/lib/postgresql/data
     environment:
+      POSTGRES_DB: nestjs_carbon_one_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: carbon_one
     ports:
-      - '5433:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - 5433:5432
+    networks:
+      - nestjs-carbon-one-network
+  pgadmin:
+    container_name: nestjs_carbon_one_db_admin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - 5333:80
+    networks:
+      - nestjs-carbon-one-network
+networks:
+  nestjs-carbon-one-network:
+    name: nestjs-carbon-one-network
 
-volumes:
-  postgres_data:

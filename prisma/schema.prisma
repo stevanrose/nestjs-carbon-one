@@ -1,13 +1,103 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model Office {
+  id             String                  @id @default(cuid())
+  code           String                  @unique
+  name           String
+  address        String?
+  gridRegionCode String
+  floorAreaM2    Float?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  employees      Employee[]
+  energyMonthly  OfficeEnergyStatement[]
+}
+
+model Employee {
+  id             String          @id @default(cuid())
+  email          String          @unique
+  department     String?
+  employmentType EmploymentType  @default(full_time)
+  workPattern    WorkPattern     @default(hybrid)
+  officeId       String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  commuteSurveys CommuteSurvey[]
+  office         Office?         @relation(fields: [officeId], references: [id])
+
+  @@index([officeId])
+}
+
+model OfficeEnergyStatement {
+  id               String          @id @default(cuid())
+  officeId         String
+  year             Int
+  month            Int
+  electricityKwh   Float
+  heatingFuelType  HeatingFuelType @default(none)
+  heatingEnergyKwh Float?
+  renewablePpasKwh Float?
+  notes            String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  office           Office          @relation(fields: [officeId], references: [id], onDelete: Cascade)
+
+  @@unique([officeId, year, month], name: "office_month_unique")
+  @@index([officeId, year, month])
+}
+
+model CommuteSurvey {
+  id                   String      @id @default(cuid())
+  employeeId           String
+  surveyDate           DateTime
+  primaryMode          CommuteMode
+  oneWayDistanceKm     Float
+  daysPerWeekCommuting Int
+  carOccupancy         Int?
+  notes                String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  employee             Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, surveyDate], name: "employee_surveydate_unique")
+  @@index([employeeId, surveyDate])
+}
+
+enum CommuteMode {
+  car_petrol
+  car_diesel
+  car_hybrid
+  car_ev
+  bus
+  train
+  metro
+  bike
+  walk
+  remote
+}
+
+enum EmploymentType {
+  full_time
+  part_time
+  contractor
+}
+
+enum HeatingFuelType {
+  none
+  natural_gas
+  district_heat
+  oil
+  other
+}
+
+enum WorkPattern {
+  office
+  remote
+  hybrid
 }
