@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { OfficesService } from './offices.service';
 import { CreateOfficeDto } from './dto/create-office.dto';
 import { UpdateOfficeDto } from './dto/update-office.dto';
+import { ListOfficesQueryDto } from './dto/list-offices-query.dto';
 
 @Controller('offices')
 export class OfficesController {
@@ -13,8 +14,8 @@ export class OfficesController {
   }
 
   @Get()
-  findAll() {
-    return this.officesService.findAll();
+  findAll(@Query() query: ListOfficesQueryDto) {
+    return this.officesService.findAll(query);
   }
 
   @Get(':id')

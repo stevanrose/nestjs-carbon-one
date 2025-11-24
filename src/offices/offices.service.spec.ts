@@ -15,7 +15,9 @@ describe('OfficesService', () => {
       findUnique: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
+    $transaction: jest.fn((operations: any[]) => Promise.all(operations)),
   };
 
   beforeEach(async () => {
@@ -37,18 +39,21 @@ describe('OfficesService', () => {
     expect(await service.create(dto)).toEqual(created);
     expect(prisma.office.create).toHaveBeenCalledWith({ data: dto });
   });
-
   it('should find all offices', async () => {
     const offices = [
       { id: 1, code: 'LON-01', name: 'London Office', gridRegionCode: 'UK-GB-L' },
       { id: 2, code: 'NYC-01', name: 'New York Office', gridRegionCode: 'US-NY' },
     ];
     mockPrisma.office.findMany.mockResolvedValue(offices);
+    mockPrisma.office.count.mockResolvedValue(1);
 
-    expect(await service.findAll()).toEqual(offices);
-    expect(prisma.office.findMany).toHaveBeenCalledWith({
-      orderBy: { name: 'asc' },
-    });
+    const result = await service.findAll({ page: 0, size: 10, sort: 'name, asc' });
+
+    expect(result.content).toEqual(offices);
+    expect(result.page).toBe(0);
+    expect(result.size).toBe(10);
+    expect(result.totalElements).toBe(1);
+    expect(result.totalPages).toBe(1);
   });
 
   it('should find one office by id', async () => {
