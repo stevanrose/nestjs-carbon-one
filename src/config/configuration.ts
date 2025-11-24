@@ -5,6 +5,9 @@ export default () => ({
   },
   database: {
     url:
-      process.env.DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5433/nestjs_carbon_one',
+      // process.env.DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5433/nestjs_carbon_one',
+
+      process.env.DATABASE_URL ??
+      'postgresql://postgres:postgres@localhost:5433/nestjs_carbon_one_db?schema=public',
   },
 });
