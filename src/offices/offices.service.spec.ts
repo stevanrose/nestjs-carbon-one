@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OfficesService } from './offices.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
-import { create } from 'domain';
 
 describe('OfficesService', () => {
   let service: OfficesService;
@@ -39,6 +38,7 @@ describe('OfficesService', () => {
     expect(await service.create(dto)).toEqual(created);
     expect(prisma.office.create).toHaveBeenCalledWith({ data: dto });
   });
+
   it('should find all offices', async () => {
     const offices = [
       { id: 1, code: 'LON-01', name: 'London Office', gridRegionCode: 'UK-GB-L' },
