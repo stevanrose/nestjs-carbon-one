@@ -5,6 +5,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { EmploymentType } from './enums/employment-type.enum';
 import { WorkPattern } from './enums/work-patter.enum';
 import { ListEmployeesQueryDto } from './dto/list-employees-query.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 describe('EmployeesController', () => {
   let controller: EmployeesController;
