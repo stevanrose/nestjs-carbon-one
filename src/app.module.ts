@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { OfficesModule } from './offices/offices.module';
 import { EmployeesModule } from './employees/employees.module';
+import { EnergystatementsModule } from './energystatements/energystatements.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { EmployeesModule } from './employees/employees.module';
     PrismaModule,
     OfficesModule,
     EmployeesModule,
+    EnergystatementsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
